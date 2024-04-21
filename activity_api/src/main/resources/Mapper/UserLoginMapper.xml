@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ahnu.activity_api.dao.UserLoginDao">
+
+    <select id="userLogin" resultType="users">
+        select
+        user_id,username,parent_name,phone,user_avatar
+        from activity_users where phone = #{phone} and password = #{password}
+    </select>
+
+    <select id="StaffLogin" resultType="staff">
+        select * from activity_staff where staff_phone = #{staffPhone} and password = #{password}
+    </select>
+
+<!--    //    用户注册
+    Integer UserRegister(Users users);-->
+    <insert id="UserRegister" parameterType="Users">
+        insert into activity_users(username,password,parent_name,phone)values (#{username},#{password},#{parentName},#{phone})
+    </insert>
+
+</mapper>

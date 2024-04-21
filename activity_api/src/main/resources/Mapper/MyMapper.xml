@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ahnu.activity_api.dao.MyDao">
+
+<!--    //    获取活动列表-->
+<!--    List<Enroll> getEnrollList(@Param("user_id") Integer user_id);-->
+
+    <resultMap id="getEnrollListResultMap" type="Enroll">
+        <id property="enrollId" column="enroll_id"></id>
+        <result property="userId" column="user_id"></result>
+        <result property="activityId" column="activity_id"></result>
+        <result property="timeId" column="time_id"></result>
+        <result property="participantId" column="participant_id"></result>
+        <result property="staffId" column="staff_id"></result>
+        <result property="contractId" column="contract_id"></result>
+        <result property="userRemarks" column="user_remarks"></result>
+        <result property="publishTime" column="publish_time"></result>
+        <collection property="participant" ofType="Participant">
+            <id property="participantId" column="participant_id"></id>
+            <result property="participantName" column="participant_name"></result>
+            <result property="participantHeight" column="participant_height"></result>
+            <result property="participantWeight" column="participant_weight"></result>
+            <result property="participantCard" column="participant_card"></result>
+            <result property="participantSex" column="participant_sex"></result>
+        </collection>
+        <collection property="time" ofType="Time">
+            <id property="timeId" column="time_id"></id>
+            <result property="timeName" column="time_name"></result>
+            <result property="timeContent" column="time_content"></result>
+            <result property="personSum" column="person_sum"></result>
+            <result property="isSignIn" column="is_sign_in"></result>
+        </collection>
+        <collection property="activity" ofType="Activity">
+            <id property="activityId" column="activity_id"></id>
+            <result property="classificationId" column="classification_id"></result>
+            <result property="activityName" column="activity_name"></result>
+            <result property="timeId" column="time_id"></result>
+            <result property="activityStaffId" column="activity_staff_id"></result>
+            <result property="activityDescribe" column="activity_describe"></result>
+            <result property="browseSum" column="browse_sum"></result>
+            <result property="activityAge" column="activity_age"></result>
+            <result property="activityStatus" column="activity_status"></result>
+            <result property="agreementId" column="agreement_id"></result>
+            <result property="staffId" column="staff_id"></result>
+            <result property="publishTime" column="publish_time"></result>
+            <result property="activityPrice" column="activity_price"></result>
+<!--            <result property="isSignIn" column="is_sign_in"></result>-->
+        </collection>
+        <collection property="headerList" ofType="Header">
+            <id property="headerId" column="header_id"></id>
+            <result property="activityId" column="activity_id"></result>
+            <result property="headerPath" column="header_path"></result>
+        </collection>
+    </resultMap>
+    <select id="getEnrollList" resultMap="getEnrollListResultMap">
+        SELECT * FROM activity_enroll e
+        LEFT JOIN activity_participant p ON e.participant_id = p.participant_id
+        LEFT JOIN activity_time t ON e.time_id = t.time_id
+        LEFT JOIN activity_activity a ON e.activity_id = a.activity_id
+        LEFT JOIN activity_header h ON a.activity_id = h.activity_id
+        WHERE e.user_id = #{user_id}
+    </select>
+
+
+<!--    //    提交签名
+    Integer UploadResultImg(Contract contract);-->
+    <insert id="UploadResultImg" parameterType="contract" useGeneratedKeys="true" keyProperty="contractId">
+        insert into activity_contract(enroll_id,agreement_id,autograph_img)values (#{enrollId},#{agreementId},#{autographImg})
+    </insert>
+
+    <!--    //    修改报名表中的合同字段
+    Integer updateEnrollInfoAndContractId(Enroll enroll);-->
+    <update id="updateEnrollInfoAndContractId">
+        update activity_enroll set contract_id = #{contractId} where enroll_id = #{enrollId}
+    </update>
+
+<!--    //    查看电子签名
+    Contract SearchContractIngoImg(@Param("contract_id")Integer contract_id);-->
+<select id="SearchContractIngoImg" resultType="Contract">
+    select * from activity_contract where contract_id = #{contract_id}
+</select>
+
+<!--    //    根据协议id获取协议内容
+    Agreement GetAgreementContentById(@Param("agreement_id") Integer agreement_id);-->
+    <select id="GetAgreementContentById" resultType="Agreement">
+        select * from activity_agreement where agreement_id = #{agreement_id}
+    </select>
+
+
+<!--
+//    获取我的收藏列表
+    List<CollectionTab> getCollectionList(@Param("user_id") Integer user_id);
+-->
+    <resultMap id="getCollectionListResultMap" type="CollectionTab">
+        <id property="collectionId" column="collection_id"></id>
+        <result property="activityId" column="activity_id"></result>
+        <result property="userId" column="user_id"></result>
+        <result property="createTime" column="create_time"></result>
+        <collection property="activity" ofType="Activity">
+            <id property="activityId" column="activity_id"></id>
+            <result property="classificationId" column="classification_id"></result>
+            <result property="activityName" column="activity_name"></result>
+            <result property="timeId" column="time_id"></result>
+            <result property="activityStaffId" column="activity_staff_id"></result>
+            <result property="activityDescribe" column="activity_describe"></result>
+            <result property="browseSum" column="browse_sum"></result>
+            <result property="activityAge" column="activity_age"></result>
+            <result property="activityStatus" column="activity_status"></result>
+            <result property="agreementId" column="agreement_id"></result>
+            <result property="staffId" column="staff_id"></result>
+            <result property="publishTime" column="publish_time"></result>
+            <result property="activityPrice" column="activity_price"></result>
+        </collection>
+        <collection property="headerList" ofType="Header">
+            <id property="headerId" column="header_id"></id>
+            <result property="activityId" column="activity_id"></result>
+            <result property="headerPath" column="header_path"></result>
+        </collection>
+    </resultMap>
+    <select id="getCollectionList" resultMap="getCollectionListResultMap">
+        SELECT * FROM activity_collection c
+        LEFT JOIN activity_activity a ON c.`activity_id` = a.`activity_id`
+        LEFT JOIN activity_header h ON a.`activity_id` = h.`activity_id`
+        WHERE user_id = #{user_id}
+    </select>
+
+
+<!--
+//    删除收藏
+    Integer DeleteCollection(@Param("collection_id")Integer collection_id);-->
+    <delete id="DeleteCollection">
+        DELETE FROM activity_collection WHERE collection_id = #{collection_id}
+    </delete>
+
+
+
+    <!--
+    //    根据用户id获取参与者列表
+    String getParticipantId(@Param("user_id") Integer user_id);
+    -->
+    <select id="getParticipantId" resultType="string">
+        SELECT participant_id FROM activity_users WHERE user_id = #{user_id}
+    </select>
+    <select id="getParticipantList" resultType="Participant">
+        select * from activity_participant where participant_id = #{participant_id}
+    </select>
+    <!--
+        Integer deleteParticipant(@Param("user_id") Integer user_id,@Param("participant_id") String participant_id);
+    -->
+    <update id="deleteParticipant">
+        UPDATE activity_users SET participant_id = #{participant_id} WHERE user_id = #{user_id}
+    </update>
+    <delete id="deleteParticipantByPId">
+        DELETE FROM activity_participant WHERE participant_id = #{participantId}
+    </delete>
+
+<!--
+    //    添加参与者
+    Integer insertParticipant(Participant participant);
+-->
+    <insert id="insertParticipant" parameterType="Participant" useGeneratedKeys="true" keyProperty="participantId">
+        INSERT INTO activity_participant VALUES(NULL,#{participantName},#{participantHeight},#{participantWeight},#{participantCard},#{participantSex},#{userId})
+    </insert>
+    <!--
+    Integer updateParticipant(@Param("user_id") Integer user_id,@Param("participant_id") String participant_id);
+    -->
+    <update id="updateParticipant">
+        UPDATE activity_users SET participant_id = #{participant_id} WHERE user_id = #{user_id}
+    </update>
+
+
+
+    <!--
+    //    提交意见
+    Integer insertOption(@Param("message") String message);
+    -->
+    <insert id="insertOption" parameterType="Option">
+        INSERT INTO activity_option VALUES(NULL,#{userId},#{optionContent},#{optionTime})
+    </insert>
+
+
+    <!--
+    //    验证旧密码
+    Integer selectOldPassword(@Param("old_password") String old_password);
+    -->
+    <select id="selectOldPassword" resultType="int">
+        select COUNT(*) from activity_users where phone = #{phone} and password = #{old_password}
+    </select>
+<!--
+//     修改密码
+    Integer updatePassword(@Param("phone") String phone,@Param("new_password") String new_password);
+-->
+    <update id="updatePassword">
+        UPDATE activity_users SET PASSWORD = #{new_password} WHERE phone = #{phone}
+    </update>
+
+
+<!--
+ List<LostArticle> getLostArticleList();
+-->
+    <resultMap id="LostArticleResultMap" type="LostArticle">
+        <id property="lostArticleId" column="lost_article_id"></id>
+        <result property="userId" column="user_id"></result>
+        <result property="lostArticleName" column="lost_article_name"></result>
+        <result property="lostArticleDescribe" column="lost_article_describe"></result>
+        <result property="lostArticleImg" column="lost_article_img"></result>
+        <result property="publishTime" column="publish_time"></result>
+        <collection property="users" ofType="Users">
+            <id property="userId" column="user_id"></id>
+            <result property="phone" column="phone"></result>
+        </collection>
+    </resultMap>
+    <select id="getLostArticleList" resultMap="LostArticleResultMap">
+        SELECT * FROM activity_lost_article a
+        LEFT JOIN activity_users u ON a.user_id = u.user_id
+    </select>
+
+
+    <!--
+    //    根据用户id获取失物招领列表
+    List<LostArticle> getLostArticleListById(@Param("user_id")Integer user_id);
+    -->
+    <select id="getLostArticleListById" resultType="LostArticle">
+        select * from activity_lost_article where user_id = #{user_id}
+    </select>
+<!--    //    根据用户id删除已发布的失物招领物品
+    Integer deleteLostArticleById(@Param("lost_article_id") Integer lost_article_id);
+    -->
+    <delete id="deleteLostArticleById">
+        DELETE FROM activity_lost_article WHERE user_id = #{user_id} and lost_article_id = #{lost_article_id}
+    </delete>
+<!--String getLostArticleImg(@Param("lost_article_id") Integer lost_article_id);-->
+    <select id="getLostArticleImg" resultType="string">
+        SELECT lost_article_img FROM activity_lost_article WHERE lost_article_id = #{lost_article_id}
+    </select>
+
+
+<!--
+//    在线相册
+//    根据用户id查询用户已经报名的id
+    List<Enroll> getEnrollListByUserId(@Param("user_id") Integer user_id);
+-->
+    <select id="getEnrollListByUserId" resultType="Enroll">
+        SELECT * FROM activity_enroll WHERE user_id = #{user_id}
+    </select>
+<!--List<Album> getAlbumList(@Param("activity_id")Integer activity_id);
+-->
+    <resultMap id="AlbumResultMap" type="Album">
+        <id property="albumId" column="album_id"></id>
+        <result property="timeId" column="time_id"></result>
+        <result property="activityName" column="activity_name"></result>
+        <result property="albumHeaderPath" column="album_header_path"></result>
+        <result property="albumStatus" column="album_status"></result>
+        <result property="createTime" column="create_time"></result>
+        <collection property="time" ofType="Time">
+            <id property="timeId" column="time_id"></id>
+            <result property="timeName" column="time_name"></result>
+            <result property="activityId" column="activity_id"></result>
+            <result property="timeContent" column="time_content"></result>
+            <result property="personSum" column="person_sum"></result>
+            <result property="isSignIn" column="is_sign_in"></result>
+        </collection>
+    </resultMap>
+    <select id="getAlbumList" resultMap="AlbumResultMap">
+        SELECT * FROM activity_album a
+        LEFT JOIN activity_time t ON a.`time_id` = t.`time_id`
+        WHERE a.time_id = #{time_id}
+    </select>
+
+
+<!--
+//获取在线相册中的图片
+    List<Picture> getPictureList(@Param("album_id")Integer album_id);
+-->
+    <select id="getPictureList" resultType="Picture">
+        SELECT * FROM activity_picture WHERE album_id = #{album_id}
+    </select>
+
+
+
+<!--    //    失物招领发布
+    Integer insertLostArticle(LostArticle lostArticle);
+-->
+    <insert id="insertLostArticle">
+        INSERT INTO activity_lost_article VALUES(NULL,#{userId},#{lostArticleName},#{lostArticleDescribe},#{lostArticleImg},#{publishTime})
+    </insert>
+
+
+<!--    //    修改用户名
+    Integer updateUserName(@Param("user_id") Integer user_id,@Param("user_name")String user_name);
+    -->
+    <update id="updateUserName">
+        UPDATE activity_users SET username = #{user_name} WHERE user_id = #{user_id}
+    </update>
+
+
+
+<!--    //    修改用户头像
+//    查询用户当前的头像地址
+    String getUserAvatar(@Param("user_id") Integer user_id);-->
+    <select id="getUserAvatar" resultType="string">
+        SELECT user_avatar FROM activity_users WHERE user_id = #{user_id}
+    </select>
+<!--//    修改数据库信息__用户头像地址信息
+    Integer updateUserAvatar(@Param("user_id")Integer user_id,@Param("user_avatar")String user_avatar);-->
+    <update id="updateUserAvatar">
+        UPDATE activity_users SET user_avatar = #{user_avatar} where user_id = #{user_id}
+    </update>
+
+</mapper>

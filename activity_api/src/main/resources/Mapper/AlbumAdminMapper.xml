@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ahnu.activity_api.dao.AlbumAdminDao">
+
+<!--    //    获取相册列表
+    List<Album> GetAlbumList();-->
+    <resultMap id="GetAlbumListResultMap" type="Album">
+        <id property="albumId" column="album_id"></id>
+        <result property="timeId" column="time_id"></result>
+        <result property="activityName" column="activity_name"></result>
+        <result property="albumHeaderPath" column="album_header_path"></result>
+        <result property="albumStatus" column="album_status"></result>
+        <result property="createTime" column="create_time"></result>
+        <collection property="time" ofType="Time">
+            <id property="timeId" column="time_id"></id>
+            <result property="timeName" column="time_name"></result>
+            <result property="activityId" column="activity_id"></result>
+            <result property="timeContent" column="time_content"></result>
+            <result property="personSum" column="person_sum"></result>
+            <result property="isSignIn" column="is_sign_in"></result>
+        </collection>
+    </resultMap>
+    <select id="GetAlbumList" resultMap="GetAlbumListResultMap">
+        SELECT * FROM activity_album a
+        LEFT JOIN activity_time t ON a.`time_id` = t.`time_id`
+    </select>
+
+
+<!--    //    获取图片列表通过相册id
+    List<Picture> GetPictureByAlbumId(@Param("album_id")Integer album_id);-->
+    <select id="GetPictureByAlbumId" resultType="Picture">
+        SELECT * FROM activity_picture WHERE album_id = #{album_id} ORDER BY publish_time DESC
+    </select>
+
+
+<!--    //    获取未被创建的时间id
+    List<Time> GetTimeList();-->
+    <select id="GetTimeList" resultType="Time">
+        select *
+        from activity_time;
+    </select>
+<!--    //    获取相册表中时间id
+    List<Album> GetTimeListAndAlbum();-->
+    <select id="GetTimeListAndAlbum" resultType="Album">
+        select * from activity_album;
+    </select>
+
+<!--        //    根据时间id获取创建相册所需信息
+    Time GetInfoByTImeId(@Param("time_id")Integer time_id);-->
+    <resultMap id="GetInfoByTImeIdMap" type="Time">
+        <id property="timeId" column="time_id"></id>
+        <result property="timeName" column="time_name"></result>
+        <result property="timeContent" column="time_content"></result>
+        <result property="activityId" column="activityId"></result>
+        <result property="personSum" column="person_sum"></result>
+        <collection property="activity" ofType="Activity">
+            <id property="activityId" column="activity_id"></id>
+            <result property="classificationId" column="classification_id"></result>
+            <result property="activityName" column="activity_name"></result>
+            <result property="timeId" column="time_id"></result>
+            <result property="activityStaffId" column="activity_staff_id"></result>
+            <result property="activityDescribe" column="activity_describe"></result>
+            <result property="browseSum" column="browse_sum"></result>
+            <result property="activityAge" column="activity_age"></result>
+            <result property="activityStatus" column="activity_status"></result>
+            <result property="agreementId" column="agreement_id"></result>
+            <result property="staffId" column="staff_id"></result>
+            <result property="publishTime" column="publish_time"></result>
+        </collection>
+    </resultMap>
+    <select id="GetInfoByTImeId" resultMap="GetInfoByTImeIdMap">
+        SELECT * FROM activity_time t
+        LEFT JOIN activity_activity  a ON t.`activity_id` = a.`activity_id`
+        WHERE t.`time_id` = #{time_id}
+    </select>
+
+
+<!--    //    创建相册
+    Integer CreateAlbum(Album album);-->
+    <insert id="CreateAlbum" parameterType="Album">
+        insert into activity_album(time_id,activity_name,album_header_path,staff_id) values (#{timeId},#{activityName},#{albumHeaderPath},#{staffId})
+    </insert>
+
+<!--        //    上传相册中图片
+    Integer UploadAlbumPicture(Picture picture);-->
+    <insert id="UploadAlbumPicture" parameterType="Picture">
+        insert into activity_picture (album_id,picture_img,staff_id)
+        values (#{albumId},#{pictureImg},#{staffId});
+    </insert>
+
+<!--    //    删除某个图片
+    Integer DeletePictureById(Integer picture_id);-->
+    <delete id="DeletePictureById" parameterType="int">
+        delete from activity_picture where picture_id = #{picture_id}
+    </delete>
+
+<!--    //    删除相册
+    //        删除数据库记录根据album_id
+    Integer DeleteAlbumById(@Param("album_id")Integer album_id);-->
+    <delete id="DeleteAlbumById" parameterType="int">
+        delete from activity_album where album_id = #{album_id}
+    </delete>
+<!--    //        获取图片表中图片根据相册id
+    List<Album> GetPictureListById(@Param("album_id")Integer album_id);-->
+    <select id="GetPictureListById" resultType="Picture">
+        SELECT * FROM activity_picture WHERE album_id = #{album_id}
+    </select>
+<!--     Integer DeletePictureByAlbumId(@Param("album_id")Integer album_id);-->
+    <delete id="DeletePictureByAlbumId" parameterType="int">
+        delete from activity_picture where album_id = #{album_id}
+    </delete>
+
+</mapper>

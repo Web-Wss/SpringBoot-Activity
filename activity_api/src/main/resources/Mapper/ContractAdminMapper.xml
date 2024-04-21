@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ahnu.activity_api.dao.ContractAdminDao">
+
+<!--    //    获取协议列表
+    List<Agreement> GetAgreementList();-->
+    <select id="GetAgreementList" resultType="Agreement">
+        select * from activity_agreement
+    </select>
+
+
+<!--    //    新增协议
+    Integer AddAgreement(Agreement agreement);-->
+    <insert id="AddAgreement" parameterType="Agreement">
+        INSERT INTO activity_agreement(agreement_name,agreement_content)VALUES(#{agreementName},#{agreementContent})
+    </insert>
+
+<!--    //    修改协议
+    Integer EditAgreementById(Agreement agreement);-->
+    <update id="EditAgreementById" parameterType="Agreement">
+        update activity_agreement set agreement_name = #{agreementName},agreement_content = #{agreementContent} where agreement_id = #{agreementId}
+    </update>
+
+
+<!--    //    获取合同列表
+    List<Contract> GetContractList();-->
+    <select id="GetContractList" resultType="Contract">
+        select * from activity_contract
+    </select>
+
+
+<!--    //    删除合同根据id
+    Integer DeleteContractById(@Param("id")Integer id);-->
+    <delete id="DeleteContractById">
+        delete from activity_contract where contract_id = #{id}
+    </delete>
+
+<!--    //    删除协议
+//    查询活动表中是否使用了该协议
+    Integer SelectActivityUseAgreement(@Param("agreement_id")Integer agreement_id);-->
+    <select id="SelectActivityUseAgreement" parameterType="int" resultType="int">
+        SELECT COUNT(*) FROM activity_activity WHERE agreement_id = #{agreement_id}
+    </select>
+<!--    //    删除
+    Integer DeleteAgreementById(@Param("agreement_id")Integer agreement_id);-->
+    <delete id="DeleteAgreementById">
+        delete from activity_agreement where agreement_id = #{agreement_id}
+    </delete>
+
+
+
+</mapper>

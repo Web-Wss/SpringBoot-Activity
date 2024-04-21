@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ahnu.activity_api.dao.EnrollAdminDao">
+
+
+<!--    //    获取报名列表
+    List<Enroll> GetEnrollList();-->
+    <resultMap id="GetEnrollListResultMap" type="Enroll">
+        <id property="enrollId" column="enroll_id"></id>
+        <result property="userId" column="user_id"></result>
+        <result property="activityId" column="activity_id"></result>
+        <result property="timeId" column="time_id"></result>
+        <result property="participantId" column="participant_id"></result>
+        <result property="staffId" column="staff_id"></result>
+        <result property="contractId" column="contract_id"></result>
+        <result property="userRemarks" column="user_remarks"></result>
+        <result property="publishTime" column="publish_time"></result>
+        <collection property="activity" ofType="Activity">
+            <id property="activityId" column="activity_id"></id>
+            <result property="activityName" column="activity_name"></result>
+            <result property="timeId" column="time_id"></result>
+            <result property="agreementId" column="agreement_id"></result>
+        </collection>
+        <collection property="time" ofType="Time">
+            <id property="timeId" column="time_id"></id>
+            <result property="timeName" column="time_name"></result>
+            <result property="activityId" column="activity_id"></result>
+            <result property="timeContent" column="time_content"></result>
+        </collection>
+        <collection property="users" ofType="Users">
+            <id property="userId" column="user_id"></id>
+            <result property="parentName" column="parent_name"></result>
+            <result property="phone" column="phone"></result>
+        </collection>
+        <collection property="participant" ofType="Participant">
+            <id property="participantId" column="participant_id"></id>
+            <result property="participantName" column="participant_name"></result>
+            <result property="participantHeight" column="participant_height"></result>
+            <result property="participantWeight" column="participant_weight"></result>
+            <result property="participantCard" column="participant_card"></result>
+            <result property="participantSex" column="participant_sex"></result>
+        </collection>
+        <collection property="staff" ofType="Staff">
+            <id property="staffId" column="staff_id"></id>
+            <result property="staffName" column="staff_name"></result>
+        </collection>
+    </resultMap>
+    <select id="GetEnrollList" resultMap="GetEnrollListResultMap">
+        SELECT * FROM activity_enroll e
+        LEFT JOIN activity_activity a ON e.`activity_id` = a.`activity_id`
+        LEFT JOIN activity_time t ON e.`time_id` = t.`time_id`
+        LEFT JOIN activity_users u ON e.`user_id` = u.`user_id`
+        LEFT JOIN activity_participant p ON e.`participant_id` = p.`participant_id`
+        LEFT JOIN activity_staff s ON e.`staff_id` = s.`staff_id`
+    </select>
+
+
+
+<!--    //    获取活动名称列表
+    List<Activity> GetActivityNameList();-->
+    <select id="GetActivityNameList" resultType="Activity">
+        SELECT * FROM activity_activity
+    </select>
+
+
+
+<!--    //    获取活动对应的时间
+    List<Time> GetTimeListByActivityId(@Param("activity_id")Integer activity_id);-->
+    <select id="GetTimeListByActivityId" resultType="Time">
+        SELECT * FROM activity_time WHERE activity_id = #{activity_id}
+    </select>
+
+
+<!--    //    获取报名列表根据活动id和时间id
+    List<Enroll> GetEnrollListByTimeAndActivityId(@Param("activity_id")Integer activity_id,@Param("time_id")Integer time_id);-->
+    <resultMap id="GetEnrollListByTimeAndActivityIdResultMap" type="Enroll">
+        <id property="enrollId" column="enroll_id"></id>
+        <result property="userId" column="user_id"></result>
+        <result property="activityId" column="activity_id"></result>
+        <result property="timeId" column="time_id"></result>
+        <result property="participantId" column="participant_id"></result>
+        <result property="staffId" column="staff_id"></result>
+        <result property="contractId" column="contract_id"></result>
+        <result property="userRemarks" column="user_remarks"></result>
+        <result property="publishTime" column="publish_time"></result>
+        <collection property="activity" ofType="Activity">
+            <id property="activityId" column="activity_id"></id>
+            <result property="activityName" column="activity_name"></result>
+            <result property="timeId" column="time_id"></result>
+            <result property="agreementId" column="agreement_id"></result>
+        </collection>
+        <collection property="time" ofType="Time">
+            <id property="timeId" column="time_id"></id>
+            <result property="timeName" column="time_name"></result>
+            <result property="activityId" column="activity_id"></result>
+            <result property="timeContent" column="time_content"></result>
+        </collection>
+        <collection property="users" ofType="Users">
+            <id property="userId" column="user_id"></id>
+            <result property="parentName" column="parent_name"></result>
+            <result property="phone" column="phone"></result>
+        </collection>
+        <collection property="participant" ofType="Participant">
+            <id property="participantId" column="participant_id"></id>
+            <result property="participantName" column="participant_name"></result>
+            <result property="participantHeight" column="participant_height"></result>
+            <result property="participantWeight" column="participant_weight"></result>
+            <result property="participantCard" column="participant_card"></result>
+            <result property="participantSex" column="participant_sex"></result>
+        </collection>
+        <collection property="staff" ofType="Staff">
+            <id property="staffId" column="staff_id"></id>
+            <result property="staffName" column="staff_name"></result>
+        </collection>
+    </resultMap>
+    <select id="GetEnrollListByTimeAndActivityId" resultMap="GetEnrollListByTimeAndActivityIdResultMap">
+        SELECT * FROM activity_enroll e
+        LEFT JOIN activity_activity a ON e.`activity_id` = a.`activity_id`
+        LEFT JOIN activity_time t ON e.`time_id` = t.`time_id`
+        LEFT JOIN activity_users u ON e.`user_id` = u.`user_id`
+        LEFT JOIN activity_participant p ON e.`participant_id` = p.`participant_id`
+        LEFT JOIN activity_staff s ON e.`staff_id` = s.`staff_id`
+        WHERE e.`activity_id` = #{activity_id} AND e.`time_id` = #{time_id}
+    </select>
+
+
+<!--    //    参与者查询
+    List<Enroll> GetParticipantName(@Param("participant_name")String participant_name);-->
+    <resultMap id="GetParticipantNameResultMap" type="Enroll">
+        <id property="enrollId" column="enroll_id"></id>
+        <result property="userId" column="user_id"></result>
+        <result property="activityId" column="activity_id"></result>
+        <result property="timeId" column="time_id"></result>
+        <result property="participantId" column="participant_id"></result>
+        <result property="staffId" column="staff_id"></result>
+        <result property="contractId" column="contract_id"></result>
+        <result property="userRemarks" column="user_remarks"></result>
+        <result property="publishTime" column="publish_time"></result>
+        <collection property="activity" ofType="Activity">
+            <id property="activityId" column="activity_id"></id>
+            <result property="activityName" column="activity_name"></result>
+            <result property="timeId" column="time_id"></result>
+            <result property="agreementId" column="agreement_id"></result>
+        </collection>
+        <collection property="time" ofType="Time">
+            <id property="timeId" column="time_id"></id>
+            <result property="timeName" column="time_name"></result>
+            <result property="activityId" column="activity_id"></result>
+            <result property="timeContent" column="time_content"></result>
+        </collection>
+        <collection property="users" ofType="Users">
+            <id property="userId" column="user_id"></id>
+            <result property="parentName" column="parent_name"></result>
+            <result property="phone" column="phone"></result>
+        </collection>
+        <collection property="participant" ofType="Participant">
+            <id property="participantId" column="participant_id"></id>
+            <result property="participantName" column="participant_name"></result>
+            <result property="participantHeight" column="participant_height"></result>
+            <result property="participantWeight" column="participant_weight"></result>
+            <result property="participantCard" column="participant_card"></result>
+            <result property="participantSex" column="participant_sex"></result>
+        </collection>
+        <collection property="staff" ofType="Staff">
+            <id property="staffId" column="staff_id"></id>
+            <result property="staffName" column="staff_name"></result>
+        </collection>
+    </resultMap>
+    <select id="GetParticipantName" resultMap="GetParticipantNameResultMap">
+        SELECT * FROM activity_enroll e
+        LEFT JOIN activity_activity a ON e.`activity_id` = a.`activity_id`
+        LEFT JOIN activity_time t ON e.`time_id` = t.`time_id`
+        LEFT JOIN activity_users u ON e.`user_id` = u.`user_id`
+        LEFT JOIN activity_participant p ON e.`participant_id` = p.`participant_id`
+        LEFT JOIN activity_staff s ON e.`staff_id` = s.`staff_id`
+        WHERE p.`participant_name` = #{participant_name}
+    </select>
+
+
+<!--    //    删除报名信息根据ID
+    Integer DeleteEnrollById(@Param("id")Integer id);-->
+    <delete id="DeleteEnrollById">
+        delete from activity_enroll where enroll_id = #{id}
+    </delete>
+
+
+
+</mapper>

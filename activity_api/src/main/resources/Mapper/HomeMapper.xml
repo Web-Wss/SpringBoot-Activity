@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ahnu.activity_api.dao.HomeDao">
+
+    <!--
+    //    获取通知栏信息
+    Notice getNotice();
+    -->
+    <select id="getNotice" resultType="Notice">
+        select * from activity_notice
+    </select>
+
+    <!--
+    //    获取活动列表
+    List<Activity> getActivityList();
+    -->
+    <resultMap id="ActivityResultMap" type="Activity">
+        <id property="activityId" column="activity_id"></id>
+        <result property="classificationId" column="classification_id"></result>
+        <result property="activityName" column="activity_name"></result>
+        <result property="timeId" column="time_id"></result>
+        <result property="activityStaffId" column="activity_staff_id"></result>
+        <result property="activityDescribe" column="activity_describe"></result>
+        <result property="browseSum" column="browse_sum"></result>
+        <result property="activityAge" column="activity_age"></result>
+        <result property="activityStatus" column="activity_status"></result>
+        <result property="agreementId" column="agreement_id"></result>
+        <result property="staffId" column="staff_id"></result>
+        <result property="publishTime" column="publish_time"></result>
+<!--        <result property="personSum" column="person_sum"></result>-->
+        <result property="activityPrice" column="activity_price"></result>
+        <collection property="headerList" ofType="Header">
+            <id property="headerId" column="header_id"></id>
+            <result property="activityId" column="activity_id"></result>
+            <result property="headerPath" column="header_path"></result>
+        </collection>
+        <collection property="imgList" ofType="Img">
+            <id property="imgId" column="img_id"></id>
+            <result property="activityId" column="activity_id"></result>
+            <result property="imgPath" column="img_path"></result>
+        </collection>
+<!--        <collection property="timeList" ofType="Time">-->
+<!--            <id property="timeId" column="time_id"></id>-->
+<!--            <result property="timeName" column="time_name"></result>-->
+<!--            <result property="activityId" column="activity_id"></result>-->
+<!--            <result property="timeContent" column="time_content"></result>-->
+<!--            <result property="personSum" column="person_sum"></result>-->
+<!--        </collection>-->
+    </resultMap>
+    <select id="getActivityList" resultMap="ActivityResultMap">
+        SELECT * FROM activity_activity
+        LEFT JOIN activity_header ON activity_activity.`activity_id` = activity_header.`activity_id`
+        LEFT JOIN activity_img ON activity_activity.`activity_id` = activity_img.`activity_id`
+        LEFT JOIN activity_time ON activity_activity.`activity_id` = activity_time.`activity_id`
+        ORDER BY activity_header.header_id ASC
+</select>
+
+
+
+
+
+
+
+
+
+</mapper>

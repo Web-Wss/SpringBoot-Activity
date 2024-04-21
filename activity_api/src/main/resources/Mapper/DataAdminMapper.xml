@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ahnu.activity_api.dao.DataAdminDao">
+
+<!--        Integer GetUserSum();-->
+    <select id="GetUserSum" resultType="int">
+        select COUNT(*) from activity_users
+    </select>
+
+<!--     Integer GetStaffSum();-->
+    <select id="GetStaffSum" resultType="int">
+        select COUNT(*) from activity_staff
+    </select>
+
+<!--        Integer GetActivitySum();-->
+    <select id="GetActivitySum" resultType="int">
+        select COUNT(*) from activity_activity
+    </select>
+
+<!--        Integer GetParticipantSum();-->
+    <select id="GetParticipantSum" resultType="int">
+        select COUNT(*) from activity_participant
+    </select>
+
+<!--    //    获取职工关注度
+//    获取职工信息
+    List<Staff> GetStaffInfo();-->
+    <select id="GetStaffInfo" resultType="Staff">
+        select * from activity_staff
+    </select>
+<!--        Integer GetStaffSumInfo(@Param("staff_id")Integer staff_id);-->
+    <select id="GetStaffSumInfo" resultType="int">
+        SELECT COUNT(*) FROM activity_enroll WHERE staff_id = #{staff_id}
+    </select>
+
+
+<!--    //    获取报名数量
+//    获取活动名称
+    List<Activity> GetActivityList();-->
+    <select id="GetActivityList" resultType="Activity">
+        SELECT * FROM activity_activity ORDER BY publish_time DESC LIMIT 7
+    </select>
+<!--        Integer GetEnrollSumList(@Param("activity_id")Integer activity_id);-->
+    <select id="GetEnrollSumList" resultType="int">
+        SELECT COUNT(*) FROM activity_enroll WHERE activity_id = #{activity_id}
+    </select>
+
+
+<!--    //    根据日期查询注册的用户数
+    Integer GetUserSumInfo(@Param("user_time")String user_time);-->
+    <select id="GetUserSumInfo" resultType="int">
+        SELECT COUNT(*) FROM activity_users WHERE user_time LIKE #{user_time}
+    </select>
+
+
+<!--
+//    获取通知管理
+    List<Notice> GetNoticeList();
+-->
+    <select id="GetNoticeList" resultType="Notice">
+        select * from activity_notice
+    </select>
+
+<!--    //    修改通知内容
+    Integer EditNoticeContent(Notice notice);-->
+    <update id="EditNoticeContent">
+        UPDATE activity_notice SET notice_content = #{noticeContent} WHERE notice_id = #{noticeId}
+    </update>
+
+
+<!--    //    获取意见反馈列表
+    List<Option> GetOptionList();-->
+    <select id="GetOptionList" resultType="Option">
+        select * from activity_option
+    </select>
+
+<!--    //    删除意见反馈根据id
+    Integer DeleteOptionById(@Param("id")Integer id);-->
+    <delete id="DeleteOptionById">
+        delete from activity_option where option_id = #{id}
+    </delete>
+
+<!--    //    获取失物招领列表
+    List<LostArticle> GetLostArticleList();-->
+    <select id="GetLostArticleList" resultType="LostArticle">
+        select * from activity_lost_article
+    </select>
+
+<!--    //    删除失物招领根据id
+    Integer DeleteLostArticleById(@Param("id") Integer id);-->
+    <delete id="DeleteLostArticleById">
+        delete from activity_lost_article where lost_article_id = #{id}
+    </delete>
+
+</mapper>

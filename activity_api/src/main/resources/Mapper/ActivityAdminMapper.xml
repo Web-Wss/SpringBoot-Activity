@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ahnu.activity_api.dao.ActivityAdminDao">
+
+<!--    //    获取分类列表
+    List<Classification> getClassificationList();
+    -->
+    <select id="getClassificationList" resultType="Classification">
+        select * from activity_classification
+    </select>
+
+<!--    //    获取时间列表
+    List<Time> getTimeList();-->
+    <select id="getTimeList" resultType="Time">
+        select * from activity_time
+    </select>
+
+<!--    //    获取活动列表
+    List<Activity> getActivityList();-->
+    <resultMap id="getActivityListResultMap" type="Activity">
+        <id property="activityId" column="activity_id"></id>
+        <result property="classificationId" column="classification_id"></result>
+        <result property="activityName" column="activity_name"></result>
+        <result property="timeId" column="time_id"></result>
+        <result property="activityStaffId" column="activity_staff_id"></result>
+        <result property="activityDescribe" column="activity_describe"></result>
+        <result property="browseSum" column="browse_sum"></result>
+        <result property="activityAge" column="activity_age"></result>
+        <result property="activityStatus" column="activity_status"></result>
+        <result property="agreementId" column="agreement_id"></result>
+        <result property="staffId" column="staff_id"></result>
+        <result property="publishTime" column="publish_time"></result>
+        <result property="activityPrice" column="activity_price"></result>
+        <collection property="headerList" ofType="Header">
+            <id property="headerId" column="header_id"></id>
+            <result property="activityId" column="activity_id"></result>
+            <result property="headerPath" column="header_path"></result>
+        </collection>
+        <collection property="classification" ofType="Classification">
+            <id property="classificationId" column="classification_id"></id>
+            <result property="classificationName" column="classification_name"></result>
+            <result property="classificationExplain" column="classification_explain"></result>
+        </collection>
+
+    </resultMap>
+    <select id="getActivityList" resultMap="getActivityListResultMap">
+        SELECT * FROM activity_activity a
+        LEFT JOIN activity_header h ON a.`activity_id` = h.`activity_id`
+        LEFT JOIN activity_classification c ON a.`classification_id` = c.`classification_id`
+    </select>
+
+
+<!--    //    获取活动列表根据分类id
+    List<Activity> GetActivityListByClassificationId(@Param("classification_id")Integer classification_id);-->
+    <resultMap id="GetActivityListByClassificationIdResultMap" type="Activity">
+        <id property="activityId" column="activity_id"></id>
+        <result property="classificationId" column="classification_id"></result>
+        <result property="activityName" column="activity_name"></result>
+        <result property="timeId" column="time_id"></result>
+        <result property="activityStaffId" column="activity_staff_id"></result>
+        <result property="activityDescribe" column="activity_describe"></result>
+        <result property="browseSum" column="browse_sum"></result>
+        <result property="activityAge" column="activity_age"></result>
+        <result property="activityStatus" column="activity_status"></result>
+        <result property="agreementId" column="agreement_id"></result>
+        <result property="staffId" column="staff_id"></result>
+        <result property="publishTime" column="publish_time"></result>
+        <result property="activityPrice" column="activity_price"></result>
+        <collection property="headerList" ofType="Header">
+            <id property="headerId" column="header_id"></id>
+            <result property="activityId" column="activity_id"></result>
+            <result property="headerPath" column="header_path"></result>
+        </collection>
+        <collection property="classification" ofType="Classification">
+            <id property="classificationId" column="classification_id"></id>
+            <result property="classificationName" column="classification_name"></result>
+            <result property="classificationExplain" column="classification_explain"></result>
+        </collection>
+    </resultMap>
+    <select id="GetActivityListByClassificationId" resultMap="GetActivityListByClassificationIdResultMap">
+        SELECT * FROM activity_activity a
+        LEFT JOIN activity_header h ON a.`activity_id` = h.`activity_id`
+        LEFT JOIN activity_classification c ON a.`classification_id` = c.`classification_id`
+        WHERE a.`classification_id` = #{classification_id}
+    </select>
+
+
+<!--    //    添加活动分类
+    Integer InsertClassification(Classification classification);
+-->
+    <insert id="InsertClassification" parameterType="Classification">
+        INSERT INTO activity_classification VALUES(NULL,#{classificationName},#{classificationExplain})
+    </insert>
+
+
+<!--    //    删除活动分类根据分类id
+    Integer DeleteClassification(@Param("classification_id")Integer classification_id);-->
+<delete id="DeleteClassification">
+    DELETE from activity_classification where classification_id = #{classification_id}
+</delete>
+
+
+<!--    //    编辑活动分类
+    Integer EditClassification(Classification classification);-->
+    <update id="EditClassification" parameterType="Classification">
+        UPDATE activity_classification
+        SET classification_name = #{classificationName}, classification_explain = #{classificationExplain}
+        WHERE classification_id = #{classificationId}
+    </update>
+
+
+<!--    //    新增活动时间
+    Integer InsertTime(Time time);-->
+    <insert id="InsertTime" parameterType="Time">
+        INSERT INTO activity_time(time_name,time_content,person_sum) VALUES(#{timeName},#{timeContent},#{personSum})
+    </insert>
+
+
+<!--    //    修改活动时间内容
+    Integer EditTimeInfo(Time time);-->
+    <update id="EditTimeInfo">
+        UPDATE activity_time SET time_name = #{timeName},person_sum = #{personSum}
+        WHERE time_id = #{timeId}
+    </update>
+
+
+<!--    //    删除活动时间根据时间id
+    Integer DeleteTime(@Param("time_id")Integer time_id);-->
+    <delete id="DeleteTime">
+        DELETE from activity_time where time_id = #{time_id}
+    </delete>
+
+
+<!--    //    创建活动
+    Integer createactivity(Activity activity);-->
+    <insert id="createactivity" useGeneratedKeys="true" keyProperty="activityId">
+        insert into activity_activity(classification_id,activity_name,time_id,activity_staff_id,activity_describe,agreement_id,staff_id,activity_price)
+        values (#{classificationId},#{activityName},#{timeId},#{activityStaffId},#{activityDescribe},#{agreementId},#{staffId},#{activityPrice})
+    </insert>
+<!--    //    更新header表
+    Integer InsertHeaderInfo(Header header);-->
+    <insert id="InsertHeaderInfo" parameterType="Header">
+        insert into activity_header(activity_id,header_path)
+        values (#{activityId},#{headerPath})
+    </insert>
+<!--    //    更新img表
+    Integer InsertImgInfo(Img img);-->
+    <insert id="InsertImgInfo" parameterType="Img">
+        insert into activity_img(activity_id,img_path)
+        values (#{activityId},#{imgPath})
+    </insert>
+<!--    //    更新time表
+    Integer updateTimeByTimeId(Time time);-->
+    <update id="updateTimeByTimeId">
+        update activity_time set activity_id = #{activityId}
+        where time_id = #{timeId}
+    </update>
+
+<!--    //    修改活动状态根据活动id
+    Integer UpdateActivityStatusById(Activity activity);-->
+    <update id="UpdateActivityStatusById">
+        update activity_activity set activity_status = #{activityStatus}
+        where activity_id = #{activityId}
+    </update>
+
+<!--    //    修改活动信息根据id
+    Integer EditActivityInfoById(Activity activity);-->
+    <update id="EditActivityInfoById">
+        update activity_activity set activity_name = #{activityName},activity_describe = #{activityDescribe}
+        where activity_id = #{activityId}
+    </update>
+
+
+<!--    //    删除活动
+//    根据活动id查询相关信息
+    Activity SelectActivityInfoAndOther(@Param("activity_id")Integer activity_id);-->
+    <resultMap id="SelectActivityInfoAndOtherMap" type="Activity">
+        <id property="activityId" column="activity_id"></id>
+        <result property="classificationId" column="classification_id"></result>
+        <result property="activityName" column="activity_name"></result>
+        <result property="timeId" column="time_id"></result>
+        <result property="activityStaffId" column="activity_staff_id"></result>
+        <result property="activityDescribe" column="activity_describe"></result>
+        <result property="browseSum" column="browse_sum"></result>
+        <result property="activityAge" column="activity_age"></result>
+        <result property="activityStatus" column="activity_status"></result>
+        <result property="agreementId" column="agreement_id"></result>
+        <result property="staffId" column="staff_id"></result>
+        <result property="publishTime" column="publish_time"></result>
+        <result property="activityPrice" column="activity_price"></result>
+        <collection property="headerList" ofType="Header">
+            <id property="headerId" column="header_id"></id>
+            <result property="activityId" column="activity_id"></result>
+            <result property="headerPath" column="header_path"></result>
+        </collection>
+        <collection property="imgList" ofType="Img">
+            <id property="imgId" column="img_id"></id>
+            <result property="activityId" column="activity_id"></result>
+            <result property="imgPath" column="img_path"></result>
+        </collection>
+    </resultMap>
+    <select id="SelectActivityInfoAndOther" resultMap="SelectActivityInfoAndOtherMap">
+        SELECT * FROM activity_activity a
+        LEFT JOIN activity_header h ON a.activity_id = h.activity_id
+        LEFT JOIN activity_img i ON a.activity_id = i.activity_id
+        WHERE a.activity_id = #{activity_id}
+    </select>
+
+<!--    //    修改time表根据时间id
+    Integer UpdateTimeInfoByTImeId(@Param("time_id")Integer time_id);
+//    删除header表信息根据活动id
+    Integer DeleteHeaderInfoByActivityId(@Param("activity_id")Integer activity_id);
+//    删除img表信息根据活动id
+    Integer DeleteImgInfoByActivityId(@Param("activity_id")Integer activity_id);-->
+    <update id="UpdateTimeInfoByTImeId">
+        update activity_time set activity_id = null
+        where activity_id = #{activity_id}
+    </update>
+    <delete id="DeleteHeaderInfoByActivityId">
+        delete from activity_header where activity_id = #{activity_id}
+    </delete>
+    <delete id="DeleteImgInfoByActivityId">
+        delete from activity_img where activity_id = #{activity_id}
+    </delete>
+<!--    //    删除活动
+    Integer DeleteActivityInfoByActivityId(@Param("activity_id")Integer activity_id);-->
+    <delete id="DeleteActivityInfoByActivityId">
+        delete from activity_activity where activity_id = #{activity_id}
+    </delete>
+
+</mapper>

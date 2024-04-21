@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ahnu.activity_api.dao.UserAdminDao">
+
+<!--    //    获取用户列表
+    List<Users> GetUserList();-->
+    <select id="GetUserList" resultType="Users">
+        select * from activity_users
+    </select>
+
+<!--    //    获取职工列表
+    List<Staff> GetStaffList();-->
+    <select id="GetStaffList" resultType="Staff">
+        select * from activity_staff
+    </select>
+
+<!--    //    获取参与者列表
+    List<Participant> GetParticipantList();-->
+    <select id="GetParticipantList" resultType="Participant">
+        select * from activity_participant
+    </select>
+
+
+<!--    //    搜索用户
+    List<Users> GetUserListByPhone(@Param("phone")String phone);-->
+    <select id="GetUserListByPhone" resultType="Users">
+        select * from activity_users where phone = #{phone}
+    </select>
+
+
+<!--    //    搜索员工根据员工名称
+    List<Staff> GetStaffByName(@Param("staff_name")String staff_name);
+-->
+    <select id="GetStaffByName" resultType="Staff">
+        select * from activity_staff where staff_name = #{staff_name}
+    </select>
+
+
+<!--    //    搜索参与者
+    List<Participant> GetParticipantByParticipantName(@Param("participant_name")String participant_name);
+    -->
+    <select id="GetParticipantByParticipantName" resultType="Participant">
+        select * from activity_participant where participant_name = #{participant_name}
+    </select>
+
+
+
+<!--    //    添加用户信息
+    Integer AddUserInfo(Users users);-->
+    <insert id="AddUserInfo" parameterType="Users">
+        insert into activity_users(username,password,parent_name,phone)values (#{username},#{password},#{parentName},#{phone})
+    </insert>
+
+<!--    //    根据用户id查询参与者信息
+    List<Participant> SearchParticipantInfoById(@Param("userId")Integer userId);-->
+    <select id="SearchParticipantInfoById" resultType="Participant">
+        select * from activity_participant where user_id = #{userId}
+    </select>
+
+
+<!--    //    修改用户信息
+    Integer EditUserInfo(Users users);-->
+    <update id="EditUserInfo" parameterType="Users">
+        update activity_users set username = #{username}, password = #{password},parent_name=#{parentName},phone=#{phone},participant_id=#{participantId} where user_id = #{userId}
+    </update>
+
+<!--    //    将参与者表的用户id字段修改为null
+    Integer UpdateParticipantByUserId(@Param("userId")Integer userId);-->
+    <update id="UpdateParticipantByUserId">
+        UPDATE activity_participant SET user_id = NULL WHERE user_id = #{userId}
+    </update>
+<!--    //     修改参与者表的用户id信息
+    Integer EditParticipantInfo(Participant participant);-->
+    <update id="EditParticipantInfo" parameterType="Participant">
+        update activity_participant set user_id = #{userId} where participant_id = #{participantId}
+    </update>
+
+
+<!--    //    获取未被绑定的参与者列表
+    List<Participant> GetNoBindParticipantList();-->
+    <select id="GetNoBindParticipantList" resultType="Participant">
+        SELECT * FROM activity_participant
+    </select>
+
+
+<!--    //    获取角色列表
+    List<Role> GetRoleList();-->
+    <select id="GetRoleList" resultType="Role">
+        select * from activity_role
+    </select>
+
+<!--    //    添加职工信息
+    Integer AddStaffInfo(Staff staff);-->
+    <insert id="AddStaffInfo" parameterType="Staff">
+        insert into activity_staff(staff_name,staff_avatar,staff_card,role_id,staff_phone,staff_info,password)
+        values(#{staffName},#{staffAvatar},#{staffCard},#{roleId},#{staffPhone},#{staffInfo},#{password})
+    </insert>
+
+
+<!--    //    修改职工信息根据id
+    Integer EditStaffInfoById(Staff staff);-->
+    <update id="EditStaffInfoById" parameterType="Staff">
+        update activity_staff set staff_name=#{staffName},
+                                  staff_card = #{staffCard},
+                                  staff_phone=#{staffPhone},
+                                  role_id=#{roleId},
+                                  staff_info=#{staffInfo},
+                                  staff_avatar=#{staffAvatar}
+        where staff_id = #{staffId}
+    </update>
+
+<!--    //    添加参与者信息
+    Integer AddParticipantInfo(Participant participant);-->
+    <insert id="AddParticipantInfo" parameterType="Participant">
+        insert into activity_participant(participant_name,participant_height,participant_weight,participant_card,participant_sex)
+        values (#{participantName},#{participantHeight},#{participantWeight},#{participantCard},#{participantSex})
+    </insert>
+
+
+<!--    //    修改参与者信息
+    Integer EditParticipantInfoById(Participant participant);
+-->
+    <update id="EditParticipantInfoById" parameterType="Participant">
+        update activity_participant set participant_name=#{participantName},
+                                        participant_height=#{participantHeight},
+                                        participant_weight=#{participantWeight},
+                                        participant_card=#{participantCard},
+                                        participant_sex=#{participantSex}
+        where participant_id = #{participantId}
+    </update>
+
+
+<!--    //    获取收藏列表
+    List<CollectionTab> GetCollectionList();-->
+    <select id="GetCollectionList" resultType="CollectionTab">
+        select * from activity_collection
+    </select>
+
+
+<!--    //    删除收藏根据id
+    Integer DeleteCollectionById(Integer id);-->
+    <select id="DeleteCollectionById">
+        delete from activity_collection where collection_id=#{id}
+    </select>
+
+
+<!--    //    修改职工的状态
+    Integer EditStaffStatus(Staff staff);-->
+    <update id="EditStaffStatus" parameterType="Staff">
+        update activity_staff
+        set staff_status=#{staffStatus}
+        where staff_id = #{staffId}
+    </update>
+
+<!--    //    修改用户的状态
+    Integer EditUserStatus(Users users);-->
+    <update id="EditUserStatus" parameterType="Users">
+        update activity_users
+        set user_status=#{userStatus}
+        where user_id = #{userId}
+    </update>
+
+<!--    //    删除参与者根据参与者id
+    Integer DeleteParticipantById(@Param("participant_id")Integer participant_Id);-->
+    <delete id="DeleteParticipantById">
+        delete from activity_participant where participant_id = #{participant_id}
+    </delete>
+
+
+<!--    //    删除用户根据用户id
+    Integer DeleteUserByUserId(@Param("user_id")Integer user_id);-->
+    <delete id="DeleteUserByUserId">
+        delete from activity_users where user_id = #{user_id}
+    </delete>
+<!--        Integer UpdateParticipantAndUserId(@Param("user_id")Integer user_id);-->
+    <update id="UpdateParticipantAndUserId" parameterType="int">
+        update activity_participant
+        set user_id = null
+        where user_id = #{user_id}
+    </update>
+
+
+<!--    //    删除职工
+//    获取所有活动列表中的职工信息
+    Activity SelectActivityAndStaffInfo();-->
+    <select id="SelectActivityAndStaffInfo" resultType="Activity">
+        select * from activity_activity;
+    </select>
+<!--    //    删除数据库记录
+    Integer DeleteStaffInfoById(@Param("staff_id")Integer staff_id);-->
+    <delete id="DeleteStaffInfoById" parameterType="int">
+        delete from activity_staff where staff_id = #{staff_id}
+    </delete>
+
+</mapper>
