@@ -23,7 +23,7 @@
 
 <img src="/img/image-20240421171813602.png" alt="image-20240421171813602" style="zoom:50%;" />
 
-<img src="D:\activity_code\img\image-20240421171828274.png" alt="image-20240421171828274" style="zoom:50%;" />
+<img src="/img/image-20240421171828274.png" alt="image-20240421171828274" style="zoom:50%;" />
 
 ## 管理员端
 
